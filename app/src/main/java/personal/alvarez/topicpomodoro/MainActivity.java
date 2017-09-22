@@ -1,10 +1,8 @@
 package personal.alvarez.topicpomodoro;
 
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,11 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.github.mikephil.charting.components.Description;
+import com.github.clans.fab.FloatingActionButton;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -40,9 +37,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        binding.bar.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, binding.drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         binding.drawerLayout.setDrawerListener(toggle);
@@ -53,7 +47,17 @@ public class MainActivity extends AppCompatActivity
         presenter = new MainPresenter();
 
         initPieChart();
+        initLocalData();
         getData();
+    }
+
+    private void initLocalData() {
+        FloatingActionButton fab1 = new FloatingActionButton(this);
+        fab1.setLabelText("TEXT");
+
+        binding.bar.content.expandableMenu.addMenuButton(fab1);
+
+        // TODO: 22/09/17 populate with topics currently saved
     }
 
     private void getData() {
@@ -70,21 +74,22 @@ public class MainActivity extends AppCompatActivity
 
     private void initPieChart() {
         // configure pie chart
-        binding.bar.content.timerChart.setUsePercentValues(true);
-        binding.bar.content.timerChart.setDescription(new Description());
 
         // enable hole and configure
         binding.bar.content.timerChart.setDrawHoleEnabled(true);
         //binding.bar.content.timerChart.setHoleColorTransparent(true);
-        binding.bar.content.timerChart.setHoleRadius(7);
-        binding.bar.content.timerChart.setTransparentCircleRadius(10);
+        binding.bar.content.timerChart.setHoleRadius(68);
+        binding.bar.content.timerChart.setTransparentCircleRadius(70);
 
         // enable rotation of the chart by touch
-        binding.bar.content.timerChart.setRotationAngle(0);
-        binding.bar.content.timerChart.setRotationEnabled(true);
+        binding.bar.content.timerChart.setRotationEnabled(false);
 
         // set a chart value selected listener
         binding.bar.content.timerChart.setOnChartValueSelectedListener(null);
+
+        //center text
+        binding.bar.content.timerChart.setCenterTextSize(23);
+        //binding.bar.content.timerChart.setCenterTextColor();
 
         addData();
     }
@@ -105,45 +110,32 @@ public class MainActivity extends AppCompatActivity
 
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "");
-        dataSet.setSliceSpace(3);
-        dataSet.setSelectionShift(5);
+        dataSet.setSliceSpace(1);
+        dataSet.setSelectionShift(0);
+        dataSet.setDrawValues(false);
 
         // add many colors
         ArrayList<Integer> colors = new ArrayList<>();
 
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-
-        colors.add(ColorTemplate.getHoloBlue());
+        colors.add(ColorTemplate.rgb("FFFFFF"));
+        colors.add(ColorTemplate.rgb("FFC41A1D"));
         dataSet.setColors(colors);
 
         // instantiate pie data object now
         PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.GRAY);
 
         binding.bar.content.timerChart.setData(data);
 
         // undo all highlights
         binding.bar.content.timerChart.highlightValues(null);
 
-        // update pie chart
-        binding.bar.content.timerChart.invalidate();
         binding.bar.content.timerChart.getLegend().setEnabled(false);
         binding.bar.content.timerChart.getDescription().setEnabled(false);
+        binding.bar.content.timerChart.setCenterText(FormatUtil.getSecondsFormatted(yData[0]));
+
+        // update pie chart
+        binding.bar.content.timerChart.invalidate();
+
 
     }
 
@@ -168,12 +160,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 

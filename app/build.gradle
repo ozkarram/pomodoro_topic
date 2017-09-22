@@ -43,4 +43,7 @@ dependencies {
 
     //chart
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
+
+    //ui
+    compile 'com.github.clans:fab:1.6.4'
 }
