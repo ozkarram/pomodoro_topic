@@ -1,4 +1,4 @@
-package personal.alvarez.topicpomodoro;
+package personal.alvarez.topicpomodoro.presenters;
 
 import java.util.concurrent.TimeUnit;
 
