@@ -4,12 +4,14 @@ package personal.alvarez.topicpomodoro.fragments;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -23,7 +25,9 @@ import javax.inject.Inject;
 import personal.alvarez.topicpomodoro.FormatUtil;
 import personal.alvarez.topicpomodoro.R;
 import personal.alvarez.topicpomodoro.TopicApplication;
+import personal.alvarez.topicpomodoro.TopicPomodoroConstants;
 import personal.alvarez.topicpomodoro.databinding.FragmentMainBinding;
+import personal.alvarez.topicpomodoro.models.Topic;
 import personal.alvarez.topicpomodoro.presenters.MainPresenter;
 
 /**
@@ -35,8 +39,7 @@ public class MainFragment extends Fragment {
 
     static MainFragment fragment;
 
-    private float TWENTY_FIVE_MINS_SECONDS = 1500;
-    float[] yData = {0, TWENTY_FIVE_MINS_SECONDS};
+    float[] yData = {0, TopicPomodoroConstants.TWENTY_FIVE_MINS_SECONDS};
 
     @Inject
     MainPresenter presenter;
@@ -62,7 +65,6 @@ public class MainFragment extends Fragment {
 
         initPieChart();
         initLocalData();
-        getData();
 
         return binding.getRoot();
     }
@@ -73,17 +75,50 @@ public class MainFragment extends Fragment {
     }
 
     private void initLocalData() {
-        // TODO: 22/09/17 populate with topics currently saved
-        FloatingActionButton fab1 = new FloatingActionButton(getActivity());
-        fab1.setLabelText("TEXT");
+        List<Topic> topics = presenter.getTopics();
 
-        binding.expandableMenu.addMenuButton(fab1);
+        for (Topic topic : topics) {
+            FloatingActionButton fab1 = new FloatingActionButton(getActivity());
+            fab1.setButtonSize(FloatingActionButton.SIZE_MINI);
+            fab1.setColorNormal(ContextCompat.getColor(getContext(), R.color.colorAccent));
+            fab1.setLabelText(topic.getName());
+            fab1.setOnClickListener(view -> {
+                startCounter();
+                Log.d("PRESSED", "PRESSED");
+
+                binding.expandableMenu.close(true);
+                binding.expandableMenu.removeAllMenuButtons();
+                // TODO: 23/09/17 set stop icon
+                binding.expandableMenu.setIconAnimated(false);
+                binding.expandableMenu.getMenuIconView().setImageResource(android.R.drawable.ic_media_pause);
+                binding.expandableMenu.setOnMenuToggleListener(opened -> {
+                    if (opened) {
+                        animateToFull();
+                        initLocalData();
+                    }
+                });
+            });
+            binding.expandableMenu.addMenuButton(fab1);
+        }
+
     }
 
-    private void getData() {
-        presenter.startTimer().subscribe(this::timeUpdated, throwable -> {
+    private void animateToFull() {
+        stopCounter();
+    }
+
+    private void stopCounter() {
+
+    }
+
+    private void startCounter() {
+
+        // TODO: 23/09/17 set load animation
+
+        presenter.getCounter().subscribe(this::timeUpdated, throwable -> {
             Log.d("ERROR", "ERROR");
         });
+
     }
 
     private void timeUpdated(Long aLong) {
@@ -118,7 +153,7 @@ public class MainFragment extends Fragment {
 
     private void drawData() {
 
-        String[] xData = {"Technical excellence", "Nimble"};
+        String[] xData = {};
 
         List<PieEntry> yVals1 = new ArrayList<>();
 

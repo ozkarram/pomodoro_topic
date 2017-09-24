@@ -29,6 +29,20 @@ public class TopicRepository {
         t1.setName("General Topic");
         t1.setPomodorosPerDay(1);
         t1.save();
+
+        Topic t2 = new Topic();
+        t2.setColor(0);
+        t2.setDaysPerWeek(7);
+        t2.setName("General Topic 2");
+        t2.setPomodorosPerDay(1);
+        t2.save();
+
+        Topic t3 = new Topic();
+        t3.setColor(0);
+        t3.setDaysPerWeek(7);
+        t3.setName("General Topic 3");
+        t3.setPomodorosPerDay(1);
+        t3.save();
     }
 
     public void createNewTopic(Topic topic) {

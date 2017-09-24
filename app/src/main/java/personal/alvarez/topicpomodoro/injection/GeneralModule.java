@@ -28,7 +28,7 @@ public class GeneralModule {
 
     @Singleton
     @Provides
-    public MainPresenter providesMainPresenter() {
-        return new MainPresenter();
+    public MainPresenter providesMainPresenter(TopicRepository repository) {
+        return new MainPresenter(repository);
     }
 }
